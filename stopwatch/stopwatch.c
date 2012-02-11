@@ -15,8 +15,6 @@ MODULE_LICENSE("GPL");
 
 #define VIDEO_MAX_FRAME		32
 
-struct vb2_queue *q;
-
 void stopwatch (char msg[32], int repeats, int (*function)( struct timespec *ts_start, struct timespec *ts_end));
 static int stopwatch_init(void);
 int ORIGINAL (struct timespec *ts_start, struct timespec *ts_end);
@@ -56,19 +54,10 @@ void stopwatch (char msg[32], int repeats, int (*function)( struct timespec *, s
 */
 static int stopwatch_init(void)
 {
-	unsigned int i;
-
 	printk ("Starting stopwatch...\n");
 
-	q = kmalloc(sizeof(struct vb2_queue), __GFP_WAIT | __GFP_IO | __GFP_FS);
-
-	q->num_buffers = VIDEO_MAX_FRAME;
-
-	for (i = 0; i < VIDEO_MAX_FRAME; ++i)
-		q->bufs[i] = (struct vb2_buffer *) kmalloc(sizeof(struct vb2_buffer), __GFP_WAIT | __GFP_IO | __GFP_FS);
-
-	stopwatch("Original_code:, ", 512, &ORIGINAL);
-	stopwatch("\nProposed_code:, ", 512, &PROPOSED);
+	stopwatch("Proposed_code:, ", 512, &PROPOSED);
+	stopwatch("\nOriginal_code:, ", 512, &ORIGINAL);
 
 	return 0;
 }
@@ -85,12 +74,27 @@ int ORIGINAL (struct timespec *ts_start, struct timespec *ts_end)
 {
 	unsigned int i;
 
+	struct vb2_queue *q;
+
+	q = kmalloc(sizeof(struct vb2_queue), __GFP_WAIT | __GFP_IO | __GFP_FS);
+
+	q->num_buffers = VIDEO_MAX_FRAME;
+
+	for (i = 0; i < VIDEO_MAX_FRAME; ++i)
+		q->bufs[i] = (struct vb2_buffer *) kmalloc(sizeof(struct vb2_buffer), __GFP_WAIT | __GFP_IO | __GFP_FS);
+
 	getnstimeofday (ts_start); /*stopwatch start*/
 
 	for (i = 0; i < q->num_buffers; ++i)
 		q->bufs[i]->state = VB2_BUF_STATE_DEQUEUED;
 
 	getnstimeofday (ts_end); /*stopwatch stop*/
+
+	for (i = 0; i < VIDEO_MAX_FRAME; ++i)
+		kfree(q->bufs[i]);
+
+	kfree(q);
+
 /*
  * Loop for testing if the result is correct
  *
@@ -111,9 +115,17 @@ int ORIGINAL (struct timespec *ts_start, struct timespec *ts_end)
 */
 int PROPOSED (struct timespec *ts_start, struct timespec *ts_end)
 {
-	/* unsigned int i; Only used when testing the result */
+	unsigned int i;
 
+	struct vb2_queue *q;
 	struct vb2_buffer *buf_ptr, *buf_ptr_end;
+
+	q = kmalloc(sizeof(struct vb2_queue), __GFP_WAIT | __GFP_IO | __GFP_FS);
+
+	q->num_buffers = VIDEO_MAX_FRAME;
+
+	for (i = 0; i < VIDEO_MAX_FRAME; ++i)
+		q->bufs[i] = (struct vb2_buffer *) kmalloc(sizeof(struct vb2_buffer), __GFP_WAIT | __GFP_IO | __GFP_FS);
 
 	getnstimeofday (ts_start); /*stopwatch start*/
 
@@ -123,6 +135,12 @@ int PROPOSED (struct timespec *ts_start, struct timespec *ts_end)
 		buf_ptr->state = VB2_BUF_STATE_DEQUEUED;
 
 	getnstimeofday (ts_end); /*stopwatch stop*/
+
+	for (i = 0; i < VIDEO_MAX_FRAME; ++i)
+		kfree(q->bufs[i]);
+
+	kfree(q);
+
 /*
  * Loop for testing if the result is correct
  *
@@ -141,13 +159,6 @@ int PROPOSED (struct timespec *ts_start, struct timespec *ts_end)
 */
 static void stopwatch_exit(void)
 {
-
-	unsigned int i;
-
-	for (i = 0; i < VIDEO_MAX_FRAME; ++i)
-		kfree(q->bufs[i]);
-
-	kfree(q);
 
 	printk ("Exiting...\n");
 }
