@@ -43,7 +43,10 @@ void stopwatch (char msg[32], int repeats, int (*function)( struct timespec *, s
 
 		diff = timespec_sub(end, begin);
 
-		printk ("%lu,", diff.tv_nsec );
+		if (diff.tv_sec > 0)
+			printk ("%lu\"%lu,", diff.tv_sec, diff.tv_nsec );
+		else
+			printk ("%lu,", diff.tv_nsec );
 	}
 }
 
