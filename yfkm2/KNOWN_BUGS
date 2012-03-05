@@ -1,0 +1,25 @@
+1 - The warning above was shown once on 3.3 Kernel under Fedora 17. Not sure about how to fix yet.
+
+[  858.634304]
+[  858.634324] ===============================
+[  858.634350] [ INFO: suspicious RCU usage. ]
+[  858.634375] 3.3.0-0.rc5.git3.1.yfkm2.fc17.x86_64 #1 Not tainted
+[  858.634409] -------------------------------
+[  858.634435] kernel/pid.c:425 find_task_by_pid_ns() needs rcu_read_lock() protection!
+[  858.634478]
+[  858.634479] other info that might help us debug this:
+[  858.634480]
+[  858.634528]
+[  858.634529] rcu_scheduler_active = 1, debug_locks = 0
+[  858.634567] no locks held by monitor/10550.
+[  858.634591]
+[  858.634592] stack backtrace:
+[  858.634620] Pid: 10550, comm: monitor Not tainted 3.3.0-0.rc5.git3.1.yfkm2.fc17.x86_64 #1
+[  858.634666] Call Trace:
+[  858.634688]  [<ffffffff810c8c55>] lockdep_rcu_suspicious+0xe5/0x100
+[  858.634727]  [<ffffffff81086921>] find_task_by_pid_ns+0x81/0xa0
+[  858.634762]  [<ffffffff81086962>] find_task_by_vpid+0x22/0x30
+[  858.634798]  [<ffffffff8131ccd5>] yfkm2_is_pid_running+0x15/0x40
+[  858.634835]  [<ffffffff8131ce54>] sys_yfkm2_monitor+0x14/0x80
+[  858.634870]  [<ffffffff816a6ba9>] system_call_fastpath+0x16/0x1b
+
