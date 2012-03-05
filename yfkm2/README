@@ -1,0 +1,12 @@
+Your First Kernel Mod v2
+
+Version 1.2 at: http://goo.gl/beP0I
+
+The problem: Create two syscalls:
+ - int yfkm2_monitor(pid) - syscall that receives a pid, verify the pid correspond to a running process. If so adds the pid to a Kernel linked list.
+ - int yfkm2_notifyme(pid, pid) - syscall that receives two pids: monitor and notifyme. If monitor is saved at the linked list, saves notifyme pid on corresponding data node. If the Kernel thread is not running, start it.
+
+And create a Kernel thread that:
+Traverse the linked list looking for "monitor" pids that do not correspond to running processess any more. When found, if there are corresponding "notifyme" pids, kill the process identified by "notifyme" pid. Waits one second before traversing the list again. If the list is empty, exit.
+
+Instructions at the wiki.
