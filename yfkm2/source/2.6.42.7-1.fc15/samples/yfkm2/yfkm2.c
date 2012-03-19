@@ -60,18 +60,12 @@ int yfkm2_is_pid_running(pid_t pid)
 
 	rcu_read_lock();
 	q = find_task_by_vpid(pid);
-	if (q != NULL)
-		get_task_struct(q);
 	rcu_read_unlock();
 
 	if (q != NULL && q->pid == pid)
-		ret = 0;
-	else
-		ret = 1;
+		return 0;
 
-	put_task_struct(q);
-
-	return ret;
+	return 1;
 }
 
 /*
@@ -89,20 +83,14 @@ int yfkm2_kill(pid_t pid)
 
 	rcu_read_lock();
 	q = find_task_by_vpid(pid);
-	if (q != NULL)
-		get_task_struct(q);
-		ret = 0;
-	} else
-		ret = 1;
-
 	rcu_read_unlock();
 
-	if (ret == 0) {
+	if (q != NULL) {
 		force_sig(SIGKILL, q);
-		put_task_struct(q);
+		return 0;
 	}
 
-	return ret;
+	return 1;
 }
 
 /*
