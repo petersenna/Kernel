@@ -89,7 +89,7 @@ int yfkm2_kill(pid_t pid)
 
 	rcu_read_lock();
 	q = find_task_by_vpid(pid);
-	if (q != NULL)
+	if (q != NULL) {
 		get_task_struct(q);
 		ret = 0;
 	} else
