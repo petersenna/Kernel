@@ -786,7 +786,7 @@ Patch50001: compat-wireless-pr_fmt-warning-avoidance.patch
 Patch50002: compat-wireless-integrated-build.patch
 
 # yfkm2
-Patch99001: linux-2.6-yfkm2.patch
+Patch99001: linux-3.3-yfkm2.patch
 
 %endif
 
@@ -1509,7 +1509,7 @@ ApplyPatch cifs-fix-dentry-refcount-leak-when-opening-a-FIFO.patch
 ApplyPatch sony-laptop-Enable-keyboard-backlight-by-default.patch
 
 # yfkm2
-ApplyPatch linux-2.6-yfkm2.patch
+ApplyPatch linux-3.3-yfkm2.patch
 
 # END OF PATCH APPLICATIONS
 
