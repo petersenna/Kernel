@@ -63,8 +63,13 @@ int yfkm2_is_pid_running(pid_t pid)
 
 	if (q != NULL && q->pid == pid)
 		return 0;
+<<<<<<< HEAD
 	else
 		return 1;
+=======
+
+	return 1;
+>>>>>>> 0fb1cf2238beca9e3dd041fb00c2f9aaf15ab5d5
 }
 
 /*
@@ -86,9 +91,13 @@ int yfkm2_kill(pid_t pid)
 
 	if (q != NULL) {
 		force_sig(SIGKILL, q);
+<<<<<<< HEAD
+=======
+		return 0;
+>>>>>>> 0fb1cf2238beca9e3dd041fb00c2f9aaf15ab5d5
 	}
 
-	return ret;
+	return 1;
 }
 
 /*
