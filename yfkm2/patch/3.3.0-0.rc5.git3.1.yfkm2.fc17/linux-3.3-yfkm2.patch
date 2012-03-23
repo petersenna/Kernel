@@ -116,8 +116,8 @@ diff -uNrp a/samples/yfkm2/userspace/notifyme.c b/samples/yfkm2/userspace/notify
 +}
 diff -uNrp a/samples/yfkm2/yfkm2.c b/samples/yfkm2/yfkm2.c
 --- a/samples/yfkm2/yfkm2.c	1969-12-31 21:00:00.000000000 -0300
-+++ b/samples/yfkm2/yfkm2.c	2012-03-03 22:57:25.201606088 -0300
-@@ -0,0 +1,210 @@
++++ b/samples/yfkm2/yfkm2.c	2012-03-23 20:03:18.577439365 -0300
+@@ -0,0 +1,215 @@
 +/*
 + * yfkm2 - Your first Kernel Modification v2
 + * Peter Senna Tschudin <peter.senna@gmail.com>
@@ -177,12 +177,14 @@ diff -uNrp a/samples/yfkm2/yfkm2.c b/samples/yfkm2/yfkm2.c
 +{
 +	struct task_struct *q;
 +
++	rcu_read_lock();
 +	q = find_task_by_vpid(pid);
++	rcu_read_unlock();
 +
 +	if (q != NULL && q->pid == pid)
 +		return 0;
-+
-+	return 1;
++	else
++		return 1;
 +}
 +
 +/*
@@ -196,13 +198,17 @@ diff -uNrp a/samples/yfkm2/yfkm2.c b/samples/yfkm2/yfkm2.c
 +int yfkm2_kill(pid_t pid)
 +{
 +	struct task_struct *q;
++	int ret;
 +
++	rcu_read_lock();
 +	q = find_task_by_vpid(pid);
++	rcu_read_unlock();
 +
 +	if (q != NULL) {
 +		force_sig(SIGKILL, q);
 +		return 0;
 +	}
++
 +	return 1;
 +}
 +
@@ -324,7 +330,6 @@ diff -uNrp a/samples/yfkm2/yfkm2.c b/samples/yfkm2/yfkm2.c
 +		}
 +
 +		return 0;
-+	} else {
++	} else
 +		return 1;
-+	}
 +}
